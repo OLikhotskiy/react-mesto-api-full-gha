@@ -6,11 +6,11 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 192.168.001.001
 
-Frontend https://...
+Frontend https://123.nomoredomains.monster
 
-Backend https://...
+Backend https://api.123.nomoredomains.monster
 
 ## Технологии проекта
 
