@@ -10,6 +10,7 @@ function checkResponseData(res) {
 export function registration(email, password) {
   return fetch(`${BASE_AUTH_URL}/signup`, {
     method: "POST",
+    credentials: 'include',
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -21,6 +22,7 @@ export function registration(email, password) {
 export function login(email, password) {
   return fetch(`${BASE_AUTH_URL}/signin`, {
     method: "POST",
+    credentials: 'include',
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -32,6 +34,7 @@ export function login(email, password) {
 export function getToken(jwt) {
   return fetch(`${BASE_AUTH_URL}/users/me`, {
     method: "GET",
+    credentials: 'include',
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
