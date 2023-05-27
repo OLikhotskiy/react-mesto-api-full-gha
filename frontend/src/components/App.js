@@ -124,7 +124,7 @@ function App() {
   }
 
   function onSignOut() {
-    localStorage.removeItem("jwt");
+    //localStorage.removeItem("jwt");
     setIsLoggedIn(false);
     navigate("/sign-in");
     setEmail("");
@@ -134,7 +134,7 @@ function App() {
     auth
       .login(email, password)
       .then((res) => {
-        localStorage.setItem("jwt", res.token);
+        //localStorage.setItem("jwt", res.token);
         setIsLoggedIn(true);
         setEmail(email);
         navigate("/");
@@ -163,23 +163,23 @@ function App() {
       .finally(handleInfoTooltip);
   }
 
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      auth
-        .getToken(jwt)
-        .then((res) => {
-          if (res) {
-            setIsLoggedIn(true);
-            setEmail(res.data.email);
-            navigate("/", { replace: true });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const jwt = localStorage.getItem("jwt");
+  //   if (jwt) {
+  //     auth
+  //       .getToken(jwt)
+  //       .then((res) => {
+  //         if (res) {
+  //           setIsLoggedIn(true);
+  //           setEmail(res.data.email);
+  //           navigate("/", { replace: true });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.error(err);
+  //       });
+  //   }
+  // }, [navigate]);
 
   useEffect(() => {
     isLogged &&
