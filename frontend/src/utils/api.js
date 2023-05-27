@@ -10,7 +10,15 @@ class Api {
     }
     return res.json();
   }
-  _request(url, options) {
+  _request(url, method, body) {
+    const options = {
+      headers: this.headers,
+      credentials: 'include',
+      method,
+    }
+    if (body !== undefined) {
+      options.body = JSON.stringify(body);
+    }
     return fetch(url, options).then(this._getResponseData);
   }
 
