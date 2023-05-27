@@ -6,11 +6,11 @@
 
 ## Ссылки на проект
 
-IP-адрес 192.168.001.001
+IP-адрес 51.250.87.238
 
-Frontend https://123.nomoredomains.monster
+Frontend https://project-mesto.nomoredomains.rocks
 
-Backend https://api.123.nomoredomains.monster
+Backend https://api.project-mesto.nomoredomains.rocks
 
 ## Технологии проекта
 
