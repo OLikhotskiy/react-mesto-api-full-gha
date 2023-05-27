@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -7,8 +7,8 @@ import AddPlacePopup from "./AddPlacePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import ImagePopup from "./ImagePopup";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { api } from "../utils/api";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
@@ -18,6 +18,7 @@ import wrong from "../images/wrong.svg";
 import ok from "../images/ok.svg";
 
 function App() {
+  const [isLogged, setIsLoggedIn] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -26,11 +27,52 @@ function App() {
   const [cards, setCards] = useState([]);
 
   const [email, setEmail] = useState(null);
-  const [isLogged, setIsLoggedIn] = useState(false);
+  
   const navigate = useNavigate();
   const [infoTooltip, setInfoTooltip] = useState(false);
   const [infoTooltipImage, setinfoTooltipImage] = useState("");
   const [infoTooltipTitle, setInfoTooltipTitle] = useState("");
+
+  const handleTokenCheck = useCallback(async () => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      try {
+        const user = await api.getInfo(jwt)
+        const cards = await api.getInitialCards(jwt)
+
+        if (!user) {
+          throw new Error("Нет данных");
+        }
+        setCurrentUser(user);
+        setCards(cards.data);
+        setIsLoggedIn(true);
+        setEmail(user.email);
+        navigate("/");
+      } catch (e) {
+        console.error(e);
+      } 
+    } 
+  }, [navigate]);
+
+  useEffect(() => {
+    handleTokenCheck();
+  }, []);
+
+  const handleEditProfileClick = () => {
+    setIsEditProfilePopupOpen(true);
+  };
+
+  const handleAddPlaceClick = () => {
+    setIsAddPlacePopupOpen(true);
+  };
+
+  const handleEditAvatarClick = () => {
+    setIsEditAvatarPopupOpen(true);
+  };
+  
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+  };
 
   const handleCardDelete = (card) => {
     const jwt = localStorage.getItem("jwt");
@@ -89,30 +131,6 @@ function App() {
       });
   };
 
-  const handleEditAvatarClick = () => {
-    setIsEditAvatarPopupOpen(true);
-  };
-
-  const handleEditProfileClick = () => {
-    setIsEditProfilePopupOpen(true);
-  };
-
-  const handleAddPlaceClick = () => {
-    setIsAddPlacePopupOpen(true);
-  };
-
-  const handleCardClick = (card) => {
-    setSelectedCard(card);
-  };
-
-  const closeAllPopups = () => {
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditAvatarPopupOpen(false);
-    setInfoTooltip(false);
-    setSelectedCard({});
-  };
-
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     const jwt = localStorage.getItem('jwt');
@@ -128,76 +146,63 @@ function App() {
       });
   }
 
-  function onSignOut() {
-    localStorage.removeItem("jwt");
-    setIsLoggedIn(false);
-    navigate("/sign-in");
-    setEmail("");
-  }
+  const closeAllPopups = () => {
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setInfoTooltip(false);
+    setSelectedCard({});
+  };
 
-  function onLogin(email, password) {
-    auth
-      .login(email, password)
-      .then((res) => {
-        localStorage.setItem("jwt", res.token);
+  
+  const onLogin = useCallback(
+    async (info) => {
+    try {
+      const data = await auth.login(info);
+      if (data.token) {
+        localStorage.setItem("jwt", data.token);
         setIsLoggedIn(true);
-        setEmail(email);
-        navigate("/");
-      })
-      .catch((err) => {
+        setEmail(info.email);
+        navigate("/", { replace: true });
+        handleTokenCheck();
+      }
+    } catch (err) {
         console.log(err);
         handleInfoTooltip();
         setinfoTooltipImage(wrong);
         setInfoTooltipTitle("Что-то пошло не так! Попробуйте еще раз.");
-      });
-  }
+      }
+    },
+    [navigate]
+  );
+  
 
-  function onRegister(email, password) {
-    auth
-      .registration(email, password)
-      .then(() => {
+  const onRegister = useCallback (
+    async (info) => {
+      try {
+        const data = await auth.registration(info);
+        if (data) {
         setinfoTooltipImage(ok);
         setInfoTooltipTitle("Вы успешно зарегистрировались!");
-        navigate("/sign-in");
-      })
-      .catch((err) => {
+        navigate("/sign-in", { replace: true });
+      }
+      } catch (err) {
         console.log(err);
         setinfoTooltipImage(wrong);
         setInfoTooltipTitle("Что-то пошло не так! Попробуйте еще раз.");
-      })
-      .finally(handleInfoTooltip);
-  }
+      }
+    }, 
+    [navigate]
+  );
 
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      auth
-        .getToken(jwt)
-        .then((res) => {
-          if (res) {
-            setIsLoggedIn(true);
-            setEmail(res.data.email);
-            navigate("/", { replace: true });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    isLogged &&
-      Promise.all([api.getUserInfo(jwt), api.getInitialCards(jwt)])
-        .then(([userData, cardsData]) => {
-          setCurrentUser(userData);
-          setCards(cardsData);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-  }, [isLogged]);
+  const onSignOut = useCallback(() => {
+    localStorage.removeItem("jwt");
+    setIsLoggedIn(false);
+    navigate("/sign-in", { replace: true });
+    setEmail("");
+  }, 
+  [navigate]
+  );
 
   function handleInfoTooltip() {
     setInfoTooltip(true);
@@ -213,6 +218,12 @@ function App() {
             path="/sign-up"
             element={<Register onRegister={onRegister} />}
           />
+          <Route
+              path="*"
+              element={
+                isLogged ? <Navigate to="/" /> : <Navigate to="/sign-in" />
+              }
+              />
           <Route
             path="/"
             element={
