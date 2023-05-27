@@ -1,4 +1,4 @@
-const BASE_AUTH_URL = "https://auth.nomoreparties.co";
+const BASE_AUTH_URL = "https://api.project-mesto.nomoredomains.rocks";
 
 function checkResponseData(res) {
   if (!res.ok) {
