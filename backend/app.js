@@ -24,6 +24,7 @@ app.use(cors({
   origin: [
     'https://project-mesto.nomoredomains.rocks',
     'http://project-mesto.nomoredomains.rocks',
+    'http://project-mesto.nomoredomains.rock/signin',
     'https://api.project-mesto.nomoredomains.rocks/users/me',
     'https://api.project-mesto.nomoredomains.rocks/cards',
     'https://api.project-mesto.nomoredomains.rocks/signup',
