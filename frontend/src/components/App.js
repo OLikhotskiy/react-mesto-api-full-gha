@@ -156,13 +156,13 @@ function App() {
 
   
   const onLogin = useCallback(
-    async (info) => {
+    async (email, password) => {
     try {
-      const data = await auth.login(info);
+      const data = await auth.login(email, password);
       if (data.token) {
         localStorage.setItem("jwt", data.token);
         setIsLoggedIn(true);
-        setEmail(info.email);
+        setEmail(email);
         navigate("/", { replace: true });
         handleTokenCheck();
       }
@@ -178,9 +178,9 @@ function App() {
   
 
   const onRegister = useCallback (
-    async (info) => {
+    async (email, password) => {
       try {
-        const data = await auth.registration(info);
+        const data = await auth.registration(email, password);
         if (data) {
         setinfoTooltipImage(ok);
         setInfoTooltipTitle("Вы успешно зарегистрировались!");
