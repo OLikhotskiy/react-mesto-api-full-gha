@@ -22,7 +22,7 @@ class Api {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${jwt}`,
       }
-    });
+    })
   }
 
   addCard(cardData, jwt) {

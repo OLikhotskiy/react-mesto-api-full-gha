@@ -7,7 +7,7 @@ import AddPlacePopup from "./AddPlacePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import ImagePopup from "./ImagePopup";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import api from "../utils/api";
+import { api } from "../utils/api";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
@@ -33,8 +33,9 @@ function App() {
   const [infoTooltipTitle, setInfoTooltipTitle] = useState("");
 
   const handleCardDelete = (card) => {
+    const jwt = localStorage.getItem("jwt");
     api
-      .deleteCard(card._id)
+      .deleteCard(card._id, jwt)
       .then(() => {
         setCards((state) => state.filter((i) => i._id !== card._id));
       })
@@ -44,8 +45,9 @@ function App() {
   };
 
   const handleUpdateUser = (newData) => {
+    const jwt = localStorage.getItem('jwt');
     api
-      .setUserInfo(newData)
+      .setUserInfo(newData, jwt)
       .then((newData) => {
         setCurrentUser(newData);
       })
@@ -58,8 +60,9 @@ function App() {
   };
 
   const handleUpdateAvatar = (data) => {
+    const jwt = localStorage.getItem('jwt');
     api
-      .setUserAvatar(data)
+      .setUserAvatar(data, jwt)
       .then((newData) => {
         setCurrentUser(newData);
       })
@@ -72,8 +75,9 @@ function App() {
   };
 
   const handleAddPlacePopup = (card) => {
+    const jwt = localStorage.getItem('jwt');
     api
-      .addCard(card)
+      .addCard(card, jwt)
       .then((newCards) => {
         setCards([newCards, ...cards]);
       })
@@ -111,8 +115,9 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const jwt = localStorage.getItem('jwt');
     api
-      .changeLikeCardStatus(card._id, !isLiked)
+      .changeLikeCardStatus(card._id, !isLiked, jwt)
       .then((newCard) => {
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
@@ -182,8 +187,9 @@ function App() {
   }, [navigate]);
 
   useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
     isLogged &&
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
+      Promise.all([api.getUserInfo(jwt), api.getInitialCards(jwt)])
         .then(([userData, cardsData]) => {
           setCurrentUser(userData);
           setCards(cardsData);

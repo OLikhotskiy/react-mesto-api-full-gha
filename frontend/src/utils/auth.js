@@ -7,7 +7,7 @@ function checkResponseData(res) {
   return res.json();
 }
 
-export function registration(email, password) {
+export function registration({ email, password} ) {
   return fetch(`${BASE_AUTH_URL}/signup`, {
     method: "POST",
     headers: {
@@ -18,7 +18,7 @@ export function registration(email, password) {
   }).then(checkResponseData);
 }
 
-export function login(email, password) {
+export function login({ email, password }) {
   return fetch(`${BASE_AUTH_URL}/signin`, {
     method: "POST",
     headers: {
