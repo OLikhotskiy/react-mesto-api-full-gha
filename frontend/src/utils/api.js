@@ -1,3 +1,5 @@
+import { BASE_AUTH_URL } from "./auth";
+
 class Api {
   constructor({ baseUrl, headers }) {
     this._baseUrl = baseUrl;
@@ -14,16 +16,22 @@ class Api {
     return fetch(url, options).then(this._getResponseData);
   }
 
-  getInitialCards() {
+  getInitialCards(jwt) {
     return this._request(`${this._baseUrl}/cards/`, {
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      }
     });
   }
 
-  addCard(cardData) {
+  addCard(cardData, jwt) {
     return this._request(`${this._baseUrl}/cards/`, {
       method: "POST",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      },
       body: JSON.stringify({
         name: cardData.name,
         link: cardData.link,
@@ -31,23 +39,32 @@ class Api {
     });
   }
 
-  deleteCard(cardId) {
+  deleteCard(cardId, jwt) {
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      },
     });
   }
 
-  getUserInfo() {
+  getUserInfo(jwt) {
     return this._request(`${this._baseUrl}/users/me/`, {
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      }
     });
   }
 
-  setUserInfo(newData) {
+  setUserInfo(newData, jwt) {
     return this._request(`${this._baseUrl}/users/me/`, {
       method: "PATCH",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      },
       body: JSON.stringify({
         name: newData.name,
         about: newData.about,
@@ -55,17 +72,20 @@ class Api {
     });
   }
 
-  setUserAvatar(data) {
+  setUserAvatar(data, jwt) {
     return this._request(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
-      headers: this._headers,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`,
+      },
       body: JSON.stringify({
         avatar: data.avatar,
       }),
     });
   }
 
-  changeLikeCardStatus(id, isLiked) {
+  changeLikeCardStatus(id, isLiked, jwt) {
     if (isLiked) {
       return this._request(`${this._baseUrl}/cards/${id}/likes`, {
         headers: this._headers,
@@ -73,7 +93,10 @@ class Api {
       });
     } else {
       return this._request(`${this._baseUrl}/cards/${id}/likes`, {
-        headers: this._headers,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${jwt}`,
+        },
         method: "DELETE",
       });
     }
@@ -81,10 +104,10 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-59",
+  baseUrl: BASE_AUTH_URL,
   headers: {
-    authorization: "2785cf20-4641-41b7-b993-5f3d50ff39ad",
     "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('jwt')}`
   },
 });
 
