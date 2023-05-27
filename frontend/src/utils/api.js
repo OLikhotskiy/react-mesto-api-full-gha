@@ -10,15 +10,7 @@ class Api {
     }
     return res.json();
   }
-  _request(url, method, body) {
-    const options = {
-      headers: this.headers,
-      credentials: 'include',
-      method,
-    }
-    if (body !== undefined) {
-      options.body = JSON.stringify(body);
-    }
+  _request(url, options) {
     return fetch(url, options).then(this._getResponseData);
   }
 
@@ -101,6 +93,7 @@ const api = new Api({
   headers: {
     "Content-Type": "application/json",
   },
+  credentials: 'include',
 });
 
 export default api;
