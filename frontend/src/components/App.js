@@ -8,7 +8,7 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import ImagePopup from "./ImagePopup";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import api from "../utils/api";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
@@ -193,7 +193,6 @@ function App() {
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
                 />
-            <Route path="*" element={<Navigate to="/" />} />
                 <Footer />
               </>
             }
