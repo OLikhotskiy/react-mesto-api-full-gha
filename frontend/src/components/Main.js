@@ -47,8 +47,8 @@ function Main({
         </section>
 
         <section className="elements" aria-label="Карточки">
-          {cards.map((card) => {
-            return (
+          {Array.isArray(cards)
+              ? cards.map((card) => (
               <Card
                 key={card._id}
                 card={card}
@@ -58,8 +58,9 @@ function Main({
                 onCardLike={onCardLike}
                 onCardDelete={onCardDelete}
               />
-            );
-          })}
+            ))
+            : ''
+          }     
         </section>
       </main>
     </CurrentUserContext.Provider>
