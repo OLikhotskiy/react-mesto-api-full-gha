@@ -52,7 +52,7 @@ function App() {
       auth.getToken(token).then((res) => {
           if (res) {
             setIsLoggedIn(true);
-            setEmail(res.data.email); //?
+            setEmail(email); //?
             navigate("/", { replace: true });
           }
         })
