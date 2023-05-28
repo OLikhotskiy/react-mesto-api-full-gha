@@ -14,18 +14,37 @@ class Api {
     return fetch(url, options).then(this._getResponseData);
   }
 
+  getUserInfo() {
+    return this._request(`${this._baseUrl}/users/me/`, {
+      headers: this._headers,
+      credentials: 'include',
+    });
+  }
+
+  setUserInfo(newData) {
+    return this._request(`${this._baseUrl}/users/me/`, {
+      method: "PATCH",
+      headers: this._headers,
+      credentials: 'include',
+      body: JSON.stringify({
+        name: newData.name,
+        about: newData.about,
+      }),
+    });
+  }
+
   getInitialCards() {
     return this._request(`${this._baseUrl}/cards/`, {
-      credentials: 'include',
       headers: this._headers,
+      credentials: 'include',
     });
   }
 
   addCard(cardData) {
     return this._request(`${this._baseUrl}/cards/`, {
       method: "POST",
-      credentials: 'include',
       headers: this._headers,
+      credentials: 'include',
       body: JSON.stringify({
         name: cardData.name,
         link: cardData.link,
@@ -36,35 +55,17 @@ class Api {
   deleteCard(cardId) {
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
-      credentials: 'include',
       headers: this._headers,
+      credentials: 'include',
     });
   }
 
-  getUserInfo() {
-    return this._request(`${this._baseUrl}/users/me/`, {
-      credentials: 'include',
-      headers: this._headers,
-    });
-  }
-
-  setUserInfo(newData) {
-    return this._request(`${this._baseUrl}/users/me/`, {
-      method: "PATCH",
-      credentials: 'include',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: newData.name,
-        about: newData.about,
-      }),
-    });
-  }
-
+  
   setUserAvatar(data) {
     return this._request(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
-      credentials: 'include',
       headers: this._headers,
+      credentials: 'include',
       body: JSON.stringify({
         avatar: data.avatar,
       }),
@@ -74,14 +75,14 @@ class Api {
   changeLikeCardStatus(id, isLiked) {
     if (isLiked) {
       return this._request(`${this._baseUrl}/cards/${id}/likes`, {
-        headers: this._headers,
         method: "PUT",
+        headers: this._headers,
         credentials: 'include',
       });
     } else {
       return this._request(`${this._baseUrl}/cards/${id}/likes`, {
-        headers: this._headers,
         method: "DELETE",
+        headers: this._headers,
         credentials: 'include',
       });
     }
@@ -89,8 +90,9 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: "api.project-mesto.nomoredomains.rocks",
+  baseUrl: "https://api.project-mesto.nomoredomains.rocks",
   headers: {
+    'Accept': 'application/json',
     "Content-Type": "application/json",
   },
 });

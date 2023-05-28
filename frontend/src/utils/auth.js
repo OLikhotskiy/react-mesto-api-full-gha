@@ -1,44 +1,67 @@
-const BASE_AUTH_URL = "https://api.project-mesto.nomoredomains.rocks";
+class Auth {
+  constructor({ baseUrl, headers }) {
+    this._baseUrl = baseUrl
+    this._headers = headers
+  }
 
-function checkResponseData(res) {
+_checkResponseData(res) {
   if (!res.ok) {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
   return res.json();
 }
 
-export function registration(email, password) {
-  return fetch(`${BASE_AUTH_URL}/signup`, {
+registration(email, password) {
+  return fetch(`${this._baseUrl}/signup`, {
     method: "POST",
+    headers: this._headers,
     credentials: 'include',
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ email, password }),
-  }).then(checkResponseData);
+  }).then(this._checkResponseData);
 }
 
-export function login(email, password) {
-  return fetch(`${BASE_AUTH_URL}/signin`, {
+login(email, password) {
+  return fetch(`${this._baseUrl}/signin`, {
     method: "POST",
+    headers: this._headers,
     credentials: 'include',
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ email, password }),
-  }).then(checkResponseData);
+  })
+  .then(this._checkResponseData)
+  .then((res) => {
+    if (res.token) {
+      return res
+    }
+  })
 }
 
-export function getToken(jwt) {
-  return fetch(`${BASE_AUTH_URL}/users/me`, {
+logout() {
+  return fetch(`${this._baseUrl}/sign-out`, {
+    method: 'POST',
+    headers: this._headers,
+    credentials: 'include',
+  }).then(this._checkResponseData)
+}
+
+getToken(token) {
+  return fetch(`${this._baseUrl}/users/me`, {
     method: "GET",
-    credentials: 'include',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${jwt}`,
+      'Content-Type': "application/json",
+      'Authorization': `Bearer ${token}`,
     },
-  }).then(checkResponseData);
+    credentials: 'include',
+  }).then(this._checkResponseData);
 }
+}
+//const BASE_AUTH_URL = "https://api.project-mesto.nomoredomains.rocks";
+
+const auth = new Auth({
+  baseUrl: 'https://api.project-mesto.nomoredomains.rocks',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
+})
+
+export default auth
